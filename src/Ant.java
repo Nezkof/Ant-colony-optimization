@@ -1,31 +1,32 @@
-public class Ant
-{
-    protected int trailSize;
-    protected int[] trail;
-    protected boolean[] visited;
+public class Ant {
+    protected int pathSize;
+    protected int[] path;
+    protected boolean[] explored;
 
-    public Ant(int tourSize)  {
-        this.trailSize = tourSize;
-        this.trail = new int[tourSize];
-        this.visited = new boolean[tourSize];
+    public Ant(int size) {
+        this.pathSize = size;
+        this.path = new int[size];
+        this.explored = new boolean[size];
     }
 
-    protected void visitCity(int currentIndex, int city)  {
-        trail[currentIndex + 1] = city;
-        visited[city] = true;
+    protected void exploreCity(int currentIndex, int city) {
+        path[currentIndex + 1] = city;
+        explored[city] = true;
     }
 
-    protected boolean visited(int i) { return visited[i];}
+    protected boolean hasExplored(int index) {
+        return explored[index];
+    }
 
-    protected double trailLength(double[][] graph)  {
-        double length = graph[trail[trailSize - 1]][trail[0]];
-        for (int i = 0; i < trailSize - 1; i++)
-            length += graph[trail[i]][trail[i + 1]];
+    protected double calculatePathLength(double[][] graph) {
+        double length = graph[path[pathSize - 1]][path[0]];
+        for (int i = 0; i < pathSize - 1; i++)
+            length += graph[path[i]][path[i + 1]];
         return length;
     }
 
-    protected void clear()  {
-        for (int i = 0; i < trailSize; i++)
-            visited[i] = false;
+    protected void clearExploredCities() {
+        for (int i = 0; i < pathSize; i++)
+            explored[i] = false;
     }
 }

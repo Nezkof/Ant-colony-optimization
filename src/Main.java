@@ -6,35 +6,47 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Main {
     public static void main(String[] args) throws IOException {
+        double[][] citiesTable = loadCitiesTable();
+        double pheromoneTrailInitial = 1.0,
+                explorationFactorAlpha = 2,
+                explotationFactorBeta = 5,
+                pheromoneEvaporationRate = 0.5,
+                initialPheromoneByAnt = 500,
+                antFitnessFactor = 300,
+                randomnessFactor = 0.01;
+        int maxIterations = 100,
+                initialCity = 6,
+                maxTries = 100;
 
-        double trailsPheromoneAmount = 1.0;
-        double alpha = 2; //2
-        double beta = 5; //5
-        double evaporation = 0.5;
-        double pheromoneAmountByAnt = 500;
-        double antFactor = 300;
-        double randomFactor = 0.01;
-        int iterationsNumber = 10;
-        int startCity = 6;
-        int triesNumber = 10;
+        ACO algorithm = new ACO(explorationFactorAlpha,
+                explotationFactorBeta,
+                pheromoneEvaporationRate,
+                initialPheromoneByAnt,
+                antFitnessFactor,
+                randomnessFactor,
+                pheromoneTrailInitial,
+                citiesTable,
+                initialCity,
+                maxTries,
+                maxIterations);
 
-        double[][] citiesTable = new double[25][25];
+        algorithm.optimize();
 
+        System.out.println("Best tour order: " + Arrays.toString(algorithm.getOptimalPath()));
+        System.out.println("Best tour length: " + algorithm.getOptimalTourLength());
+
+        MapVisualisation map = new MapVisualisation(algorithm.getOptimalPath());
+        map.showMap();
+    }
+
+    private static double[][] loadCitiesTable() throws IOException {
         Workbook wb = new XSSFWorkbook(new FileInputStream("E:\\KNU\\2Course\\2 Semester\\OOI\\Lab4\\CitiesInfo.xlsx"));
-
-        for (int i = 0; i < 25; ++i){
-            for (int j = 0; j < 25; ++j){
+        double[][] citiesTable = new double[25][25];
+        for (int i = 0; i < 25; ++i) {
+            for (int j = 0; j < 25; ++j) {
                 citiesTable[i][j] = wb.getSheetAt(0).getRow(i).getCell(j).getNumericCellValue();
             }
         }
-
-        AntColonyAlgorithm algorithm = new AntColonyAlgorithm(alpha, beta, evaporation, pheromoneAmountByAnt, antFactor,randomFactor, trailsPheromoneAmount, citiesTable, startCity, triesNumber, iterationsNumber);
-
-        algorithm.startOptimization();
-        System.out.println("Best tour order: " + Arrays.toString(algorithm.getBestPath()));
-        System.out.println("Best tour length: " + algorithm.getBestTourLength());
-
-        MapVisualisation map = new MapVisualisation(algorithm.getBestPath());
-        map.showMap();
+        return citiesTable;
     }
 }
